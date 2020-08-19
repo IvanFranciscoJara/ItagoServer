@@ -20,8 +20,13 @@ var PRIVATE_KEY = fs.readFileSync('./private.key', { encoding: 'UTF-8' })
 var PUBLIC_KEY = fs.readFileSync('./public.key', { encoding: 'UTF-8' })
 
 app.use(cors())
+app.get('/', function (req, res) {
+  console.log('Homepage')
+  res.sendFile(__dirname + '/index.html')
+})
 app.use(bodyParser.json())
 app.use(express.json())
+
 let clientes = []
 
 io.on('connection', socket => {
