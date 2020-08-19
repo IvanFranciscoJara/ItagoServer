@@ -114,4 +114,4 @@ const db = mongoose.connection
 db.on('error', error => console.error(error))
 db.once('open', () => console.log('Connected to database'))
 
-http.listen(3000, () => console.log('Server Started at http://localhost:3000'))
+http.listen(8080, () => console.log('Server Started at http://localhost:3000'))
