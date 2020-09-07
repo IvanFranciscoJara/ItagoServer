@@ -74,6 +74,9 @@ const BasicDatabyID = async idUser => {
 }
 const VerifyLink = async code => {
   console.log('VerifyLink', code)
+  if (!code.match(/^[0-9a-fA-F]{24}$/)) {
+    return { message: 'Invalid Link' }
+  }
   let Link = await ModelLinks.findById(code)
   console.log(Link)
   if (Link === null) {
