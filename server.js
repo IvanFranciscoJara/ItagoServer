@@ -22,7 +22,7 @@ var push = require('web-push')
 
 var PRIVATE_KEY = fs.readFileSync(__dirname + '/src/private.key', { encoding: 'UTF-8' })
 var PUBLIC_KEY = fs.readFileSync(__dirname + '/src/public.key', { encoding: 'UTF-8' })
-
+const PORT = process.env.PORT || 80;
 app.use(cors())
 app.get('/nuevoindex', function (req, res) {
   console.log('Homepage')
@@ -147,4 +147,4 @@ const db = mongoose.connection
 db.on('error', error => console.error(error))
 db.once('open', () => console.log('Connected to database'))
 
-http.listen(80, () => console.log('Server Started at http://localhost:80'))
+http.listen(PORT, () => console.log(`Server Started at http://localhost:${PORT}`))
