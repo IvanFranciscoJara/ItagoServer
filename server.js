@@ -1,4 +1,5 @@
 const express = require('express')
+
 const app = express()
 var http = require('http').createServer(app)
 var io = require('socket.io')(http)
@@ -9,17 +10,25 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 var jwt = require('jsonwebtoken')
 
-const RouteChatRooms = require('./routes/RouteChatRooms')
-const RouteLinks = require('./routes/RouteLinks')
-const RouteRegister = require('./routes/RouteRegister')
+const RouteChatRooms = require('./src/routes/RouteChatRooms')
+const RouteLinks = require('./src/routes/RouteLinks')
+const RouteRegister = require('./src/routes/RouteRegister')
 
 const fs = require('fs')
 const { Console } = require('console')
 const { verify } = require('crypto')
-var PRIVATE_KEY = fs.readFileSync('./private.key', { encoding: 'UTF-8' })
-var PUBLIC_KEY = fs.readFileSync('./public.key', { encoding: 'UTF-8' })
+
+var push = require('web-push')
+
+var PRIVATE_KEY = fs.readFileSync(__dirname + '/src/private.key', { encoding: 'UTF-8' })
+var PUBLIC_KEY = fs.readFileSync(__dirname + '/src/public.key', { encoding: 'UTF-8' })
 
 app.use(cors())
+app.get('/nuevoindex', function (req, res) {
+  console.log('Homepage')
+  res.sendFile(__dirname + '/index2.html')
+})
+
 app.get('/', function (req, res) {
   console.log('Homepage')
   res.sendFile(__dirname + '/index.html')
@@ -28,6 +37,30 @@ app.use(bodyParser.json())
 app.use(express.json())
 
 let clientes = []
+
+// let vapid = push.generateVAPIDKeys()
+let vapid = {
+  publicKey: 'BMwjQB3wSAGY7fKhblerz6StsVJ2JDJCd6dJG02iHNwZOcIJ1CCorr8AMwUi2oH51on9TYCIG3GEDo3xRwLfZKo',
+  privateKey: 'HGr6idZELCLXvqdiXLoFlPCJJ_w_LE7odcqP0ds4Xhs'
+}
+
+// push.setVapidDetails('mailto:test@code.co.uk', vapid.publicKey, vapid.privateKey)
+
+// let sub = {
+//   endpoint:
+//     'https://fcm.googleapis.com/fcm/send/dn7CEGOXyVs:APA91bFQCWgV5ybw_DF9EMUytO2jbAFDEFQBejI5sxWKUBOlw4kmGU8okmDjJRQoJb4VZQ6SUq-bTKorVeP2ygRvAZG4RqouSbYTMFsJXF0Ji8iED9ArbGQ2nHrO6gY0D4cR_Ut-Awlh',
+//   expirationTime: null,
+//   keys: {
+//     p256dh: 'BIBKuOO1U78IL_VeXob7Tz46JDtcDjEs0vTGQLEYApI1DJr4w58rvSXv5YvEy5XHMLbDZAjQ83bpypCQ4FLrKqs',
+//     auth: '67eAEnRKxwGEFeoRG2BgeQ'
+//   }
+// }
+
+// let payload = JSON.stringify({ message: 'hola, como va todo?' })
+
+// push.sendNotification(sub)
+
+console.log(vapid)
 
 io.on('connection', socket => {
   console.log('hola socjket io :D', socket.id)
@@ -114,4 +147,4 @@ const db = mongoose.connection
 db.on('error', error => console.error(error))
 db.once('open', () => console.log('Connected to database'))
 
-http.listen(8080, () => console.log('Server Started at http://localhost:3000'))
+http.listen(80, () => console.log('Server Started at http://localhost:80'))
