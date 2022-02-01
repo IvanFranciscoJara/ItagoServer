@@ -11,27 +11,26 @@ const cors = require('cors')
 var jwt = require('jsonwebtoken')
 
 const RouteChatRooms = require('./src/routes/RouteChatRooms')
-const RouteLinks = require('./src/routes/RouteLinks')
 const RouteRegister = require('./src/routes/RouteRegister')
 
 const fs = require('fs')
-const { Console } = require('console')
-const { verify } = require('crypto')
 
-var push = require('web-push')
-
-var PRIVATE_KEY = fs.readFileSync(__dirname + '/src/private.key', { encoding: 'UTF-8' })
-var PUBLIC_KEY = fs.readFileSync(__dirname + '/src/public.key', { encoding: 'UTF-8' })
-const PORT = process.env.PORT || 80;
-app.use(cors())
-app.get('/nuevoindex', function (req, res) {
-  console.log('Homepage')
-  res.sendFile(__dirname + '/index2.html')
+var PRIVATE_KEY = fs.readFileSync(__dirname + '/src/private.key', {
+  encoding: 'UTF-8',
 })
+var PUBLIC_KEY = fs.readFileSync(__dirname + '/src/public.key', {
+  encoding: 'UTF-8',
+})
+const PORT = process.env.PORT || 80
+app.use(cors())
+// app.get('/nuevoindex', function (req, res) {
+//   console.log('Homepage')
+//   res.send('ItWorked')
+// })
 
 app.get('/', function (req, res) {
   console.log('Homepage')
-  res.sendFile(__dirname + '/index.html')
+  res.send('ItagoServer Ivan Francisco Jara')
 })
 app.use(bodyParser.json())
 app.use(express.json())
@@ -41,7 +40,7 @@ let clientes = []
 // let vapid = push.generateVAPIDKeys()
 let vapid = {
   publicKey: 'BMwjQB3wSAGY7fKhblerz6StsVJ2JDJCd6dJG02iHNwZOcIJ1CCorr8AMwUi2oH51on9TYCIG3GEDo3xRwLfZKo',
-  privateKey: 'HGr6idZELCLXvqdiXLoFlPCJJ_w_LE7odcqP0ds4Xhs'
+  privateKey: 'HGr6idZELCLXvqdiXLoFlPCJJ_w_LE7odcqP0ds4Xhs',
 }
 
 // push.setVapidDetails('mailto:test@code.co.uk', vapid.publicKey, vapid.privateKey)
@@ -62,15 +61,15 @@ let vapid = {
 
 console.log(vapid)
 
-io.on('connection', socket => {
+io.on('connection', (socket) => {
   console.log('hola socjket io :D', socket.id)
-  socket.on('registro', token => {
+  socket.on('registro', (token) => {
     if (token !== null) {
       const VERIFICAR = jwt.verify(token, PUBLIC_KEY, {
-        algorithms: ['RS256']
+        algorithms: ['RS256'],
       })
       let NewCliente = { idSocket: socket.id, idUser: VERIFICAR.ID }
-      let Index = clientes.findIndex(cliente => cliente.idUser === VERIFICAR.ID)
+      let Index = clientes.findIndex((cliente) => cliente.idUser === VERIFICAR.ID)
       if (Index === -1) {
         // Solo se inserta si es que no esta registrado
         clientes.push(NewCliente)
@@ -80,7 +79,7 @@ io.on('connection', socket => {
   })
   socket.on('disconnect', () => {
     console.log('Hubo una desconección', socket.id)
-    let Index = clientes.findIndex(Cliente => Cliente.idSocket === socket.id)
+    let Index = clientes.findIndex((Cliente) => Cliente.idSocket === socket.id)
     console.log(Index)
     if (Index !== -1) {
       clientes.splice(Index, 1)
@@ -103,7 +102,7 @@ app.use('/chatRooms', (req, res, next) => {
   const token = req.headers['xtoken']
   try {
     const VERIFICAR = jwt.verify(token, PUBLIC_KEY, {
-      algorithms: ['RS256']
+      algorithms: ['RS256'],
     })
 
     var Ahora = new Date()
@@ -116,12 +115,12 @@ app.use('/chatRooms', (req, res, next) => {
       const NuevoToken = jwt.sign(
         {
           ID: VERIFICAR.ID,
-          NAME: VERIFICAR.NAME
+          NAME: VERIFICAR.NAME,
         },
         PRIVATE_KEY,
         {
           expiresIn: 60 * 60 * 24 * 10,
-          algorithm: 'RS256'
+          algorithm: 'RS256',
         }
       )
       res.header('refreshtoken', NuevoToken)
@@ -144,7 +143,7 @@ mongoose.connect(
 )
 
 const db = mongoose.connection
-db.on('error', error => console.error(error))
+db.on('error', (error) => console.error(error))
 db.once('open', () => console.log('Connected to database'))
 
 http.listen(PORT, () => console.log(`Server Started at http://localhost:${PORT}`))
