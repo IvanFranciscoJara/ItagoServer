@@ -21,7 +21,7 @@ var PRIVATE_KEY = fs.readFileSync(__dirname + '/src/private.key', {
 var PUBLIC_KEY = fs.readFileSync(__dirname + '/src/public.key', {
   encoding: 'UTF-8',
 })
-const PORT = process.env.PORT || 80
+const PORT = process.env.PORT || 9001
 app.use(cors())
 // app.get('/nuevoindex', function (req, res) {
 //   console.log('Homepage')
